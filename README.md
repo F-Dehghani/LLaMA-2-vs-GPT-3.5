@@ -1,4 +1,4 @@
-Thesis Project on LLMs in Test Case Generation
+Thesis Project on usefulness of LLMs in Test Case Generation
 
 Description
 
