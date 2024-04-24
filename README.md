@@ -1,4 +1,4 @@
-Thesis Project Datasets on LLMs in Test Case Generation
+Thesis Project on LLMs in Test Case Generation
 
 Description
 
