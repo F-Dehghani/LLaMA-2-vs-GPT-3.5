@@ -1,8 +1,8 @@
 import replicate
-import csv  # Import CSV module
+import csv
 import re
 
-# Initialize the Replicate client with your API token
+
 client = replicate.Client(api_token="API_TOKEN")
 def clean_output(text):
     # Removing excessive 'Sure' or other repetitive noise
@@ -17,14 +17,14 @@ def generate_test_case(scenario):
         "top_p": 1,
         "temperature": 0.5,
         "system_prompt": "You are a quality assurance engineer drafting test cases for a web-based login system.",
-        "prompt": f" Generate a table with the following columns: ScenarioInput, Test Steps. Start directly with the table for the scenario: {scenario}.",
+        "prompt": f" Generate a table with the following columns: ScenarioInput, Testcases. Start directly with the table for the scenario: {scenario}.",
         "max_new_tokens": 1100,
         "length_penalty": 1,
         "presence_penalty": 0,
         "prompt_template": "<s>[INST] <<SYS>>\n{system_prompt}\n<</SYS>>\n\n{prompt} [/INST]"
     }
 
-    full_output = ""  # Use a string to accumulate output
+    full_output = ""  
     for event in client.stream("meta/llama-2-7b-chat", input=input):
         if isinstance(event, dict) and "text" in event:
             full_output += event['text']
@@ -32,7 +32,7 @@ def generate_test_case(scenario):
             full_output += str(event)
     return full_output
 
-# List of scenario inputs and CSV handling code remains the same as your initial setup.
+
 
 # List of scenario inputs
 scenario_inputs = [
@@ -136,16 +136,15 @@ scenario_inputs = [
     
 ]
 
-# File to save the outputs
+
 csv_file = 'LLaMA2_generated_test_cases.csv'
 
-# Open the CSV file
+
 with open(csv_file, mode='w', newline='') as file:
     writer = csv.writer(file)
-    # Write the header row
     writer.writerow(['Scenario', 'Output'])
 
-    # Generate test cases for each scenario and write to the CSV
+  
     for scenario in scenario_inputs:
         output = generate_test_case(scenario)
         output_text = clean_output(output)
