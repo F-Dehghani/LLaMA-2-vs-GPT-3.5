@@ -1,0 +1,36 @@
+# Function to estimate the number of tokens in a text
+def estimate_tokens(text):
+    return len(text.split())
+
+# Estimate tokens for a few entries to get an average per test case
+gpt_input_tokens = gpt_data['Scenarios Input'].apply(estimate_tokens)
+gpt_output_tokens = gpt_data['Testcases'].apply(estimate_tokens)
+llama_input_tokens = llama_data['Scenarios Input'].apply(estimate_tokens)
+llama_output_tokens = llama_data['Testcases'].apply(estimate_tokens)
+
+# average tokens for inputs and outputs
+average_tokens__gpt = (gpt_input_tokens + gpt_output_tokens).mean()
+average_tokens_llama = (llama_input_tokens + llama_output_tokens).mean()
+
+
+average_tokens_per_case_gpt, average_tokens_per_case_llama
+
+#######
+
+
+num_cases_gpt = gpt_data.shape[0]
+num_cases_llama = llama_data.shape[0]
+
+# Cost per token (USD) as provided by API websites
+cost_per_token_gpt35_input = 0.50 / 1_000_000
+cost_per_token_gpt35_output = 1.50 / 1_000_000
+cost_per_token_llama2_input = 0.05 / 1_000_000
+cost_per_token_llama2_output = 0.25 / 1_000_000
+
+# Total cost calculation
+total_cost_gpt = (gpt_input_tokens.mean() * cost_per_token_gpt35_input + 
+                  gpt_output_tokens.mean() * cost_per_token_gpt35_output) * num_cases_gpt
+total_cost_llama = (llama_input_tokens.mean() * cost_per_token_llama2_input + 
+                    llama_output_tokens.mean() * cost_per_token_llama2_output) * num_cases_llama
+
+total_cost_gpt, total_cost_llama
