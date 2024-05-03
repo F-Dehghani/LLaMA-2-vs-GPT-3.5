@@ -12,7 +12,7 @@ def clean_output(text):
 
 
 def generate_test_case(scenario):
-    input = {
+    input_parameters = {
         "top_k": 0,
         "top_p": 1,
         "temperature": 0.5,
@@ -25,7 +25,7 @@ def generate_test_case(scenario):
     }
 
     full_output = ""  
-    for event in client.stream("meta/llama-2-7b-chat", input=input):
+    for event in client.stream("meta/llama-2-7b-chat", input=input_parameters):
         if isinstance(event, dict) and "text" in event:
             full_output += event['text']
         else:
@@ -35,7 +35,7 @@ def generate_test_case(scenario):
 
 
 # List of scenario inputs
-scenario_inputs = [
+scenarios_inputs = [
     "Verify that users can register with valid information",
     "Verify that users cannot register with invalid information (e.g., invalid email format, duplicate username).",
     "Verify that users can log in with correct credentials.",
@@ -142,12 +142,10 @@ csv_file = 'LLaMA2_generated_test_cases.csv'
 
 with open(csv_file, mode='w', newline='') as file:
     writer = csv.writer(file)
-    writer.writerow(['Scenario', 'Output'])
+    writer.writerow(['Scenarios Input', 'Testcases'])
+    for scenario in scenarios_inputs:
+        test_case = generate_test_case(scenario)
+        test_case_text = clean_output(test_case)
+        writer.writerow([scenario, test_case_text])
 
-  
-    for scenario in scenario_inputs:
-        output = generate_test_case(scenario)
-        output_text = clean_output(output)
-        
-        writer.writerow([scenario, output_text])
 print(f"Test cases generated and saved to '{csv_file}'.")
