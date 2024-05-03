@@ -4,9 +4,9 @@ import pandas as pd
 
 openai.api_key = 'API_CODE'
 
-def generate_test_case_with_chat(scenario):
+def generate_test_case(scenario):
     response = openai.ChatCompletion.create(
-     model="gpt-3.5-turbo",  # This should be the correct model name for GPT-3.5 chat
+     model="gpt-3.5-turbo",  
       messages=[
           {"role": "system", "content": "You are a quality assurance engineer drafting test cases for a web-based login system."},
           {"role": "user", "content": f"The objective is to {scenario}. Please generate test cases in a table with the following columns: Scenarios Input, Test steps."}
@@ -14,7 +14,7 @@ def generate_test_case_with_chat(scenario):
     )
     return response.choices[0].message['content']
 
-# List of scenario inputs
+
 scenario_inputs = [
     "Verify that users can register with valid information",
     "Verify that users cannot register with invalid information (e.g., invalid email format, duplicate username).",
@@ -116,18 +116,18 @@ scenario_inputs = [
     
 ]
 
-# Initialize an empty list to hold the test cases
+
 test_cases = []
 
-# Generate test cases for each scenario
+
 for scenario in scenario_inputs:
-    test_case = generate_test_case_with_chat(scenario)
+    test_case = generate_test_case(scenario)
     test_cases.append((scenario, test_case))
 
-# Convert the test cases into a pandas DataFrame
+
 df_test_cases = pd.DataFrame(test_cases, columns=['Scenarios Input', 'Testcases'])
 
-# Output the dataframe to a CSV file
+
 df_test_cases.to_csv('/Users/fazelehdehghani/Desktop/GPT_generated_test_cases.csv', index=False)
 
 print("Test cases generated and saved to 'GPT_generated_test_cases.csv'.")
