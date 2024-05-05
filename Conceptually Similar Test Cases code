@@ -1,0 +1,33 @@
+from sentence_transformers import SentenceTransformer, util
+from matplotlib_venn import venn2
+import matplotlib.pyplot as plt
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+reference_embeddings = model.encode(cleaned_reference_dataset['Testcases'].dropna().tolist(), convert_to_tensor=True)
+generated_embeddings_LLaMA = model.encode(LLaMA_df['Testcases'].dropna().tolist(), convert_to_tensor=True)
+generated_embeddings_GPT = model.encode(GPT_df['Testcases'].dropna().tolist(), convert_to_tensor=True)
+
+cosine_similarities_LLaMA = util.cos_sim(generated_embeddings_LLaMA, reference_embeddings)
+cosine_similarities_GPT = util.cos_sim(generated_embeddings_GPT, reference_embeddings)
+
+similar_indices_LLaMA = cosine_similarities_LLaMA >= 0.5
+similar_indices_GPT = cosine_similarities_GPT >= 0.5
+
+conceptual_similarity_count_LLaMA = similar_indices_LLaMA.sum()
+conceptual_similarity_count_GPT = similar_indices_GPT.sum()
+
+
+print(f"LLaMA: Number of Conceptually Similar Test Cases = {conceptual_similarity_count_LLaMA}")
+print(f"GPT: Number of Conceptually Similar Test Cases = {conceptual_similarity_count_GPT}")
+
+LLaMA_indices = similar_indices_LLaMA.nonzero(as_tuple=True)[0].tolist()
+GPT_indices = similar_indices_GPT.nonzero(as_tuple=True)[0].tolist()
+
+set_LLaMA = set(LLaMA_indices)
+set_GPT = set(GPT_indices)
+
+plt.figure(figsize=(8, 8))
+venn2([set_LLaMA, set_GPT], ('LLaMA Similar Test Cases', 'GPT Similar Test Cases'))
+plt.title("Overlap of Conceptually Similar Test Cases")
+plt.show()
